@@ -1,0 +1,30 @@
+# Arquivos de ambiente e configuração
+.env
+.env.local
+.env.*.local
+
+# Detalhes de implementação
+DETALHES_IMPLEMENTACAO.md
+
+# Dependências
+node_modules/
+package-lock.json
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDEs e editores
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Outros
+.tmp/
+.temp/ 
