@@ -33,7 +33,7 @@ const login = async (req, res) => {
 const createUser = async (req, res) => {
     const { name, login_email, password, user_type } = req.body;
 
-    // Validações básicas
+    
     if (!name || !login_email || !password || !user_type) {
         return res.status(400).json({ message: 'Todos os campos são obrigatórios' });
     }
@@ -43,6 +43,27 @@ const createUser = async (req, res) => {
     }
 
     try {
+        
+        const userCount = await User.count();
+        
+        
+        if (userCount > 0) {
+            
+            const token = req.headers.authorization?.split(' ')[1];
+            if (!token) {
+                return res.status(401).json({ message: 'Token não fornecido' });
+            }
+
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                if (decoded.user_type !== 'admin') {
+                    return res.status(403).json({ message: 'Apenas administradores podem criar novos usuários' });
+                }
+            } catch (err) {
+                return res.status(403).json({ message: 'Token inválido' });
+            }
+        }
+
         const hashedPassword = await bcrypt.hash(String(password), 10);
         const newUser = await User.create({
             name,
@@ -100,7 +121,7 @@ const updateUser = async (req, res) => {
 
         await user.save();
         
-        // Não retornar a senha no response
+        
         const { password: _, ...userWithoutPassword } = user.toJSON();
         res.json(userWithoutPassword);
     } catch (err) {
